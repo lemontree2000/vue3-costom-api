@@ -1,6 +1,7 @@
 import { defineComponent, h, ref, computed } from '@vue/runtime-core'
 import StartPage from './page/StartPage'
 import GamePage from './page/GamePage'
+import EndPage from './page/EndPage'
 
 export default defineComponent({
     setup() {
@@ -10,6 +11,8 @@ export default defineComponent({
                 return StartPage
             } else if (currentPageName.value === 'GamePage') {
                 return GamePage
+            } else if (currentPageName.value === 'EndPage') {
+                return EndPage
             }
         })
         return {

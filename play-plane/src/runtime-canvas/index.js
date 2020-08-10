@@ -1,5 +1,5 @@
 import { createRenderer } from "@vue/runtime-core"
-import { Graphics, Text, Container, Sprite, Texture } from 'pixi.js'
+import { Text, Container, Sprite, Texture } from 'pixi.js'
 const renderer = createRenderer({
     createElement(type) {
         let element;
@@ -14,7 +14,6 @@ const renderer = createRenderer({
         return element
     },
     insert(el, parent) {
-        console.log(parent)
         parent.addChild(el)
     },
     patchProp(el, key, prevValue, nextValue) {
@@ -29,7 +28,6 @@ const renderer = createRenderer({
         }
     },
     setElementText(node, text) {
-        console.log(node, text)
         const cText = new Text(text)
         node.addChild(cText)
     },
@@ -42,8 +40,8 @@ const renderer = createRenderer({
     nextSibling() {
 
     },
-    remove(){
-        
+    remove() {
+
     }
 })
 
