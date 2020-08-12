@@ -1,11 +1,26 @@
-import { defineComponent, toRefs, h, ref } from '@vue/runtime-core'
+import { defineComponent, toRefs, h, ref, onMounted, onUnmounted } from '@vue/runtime-core'
 import plane from '../../assets/plane.png'
 
 export default defineComponent({
     props: ['x', 'y'],
-    setup(props, ctx) {
+    setup(props, { emit }) {
         const { x, y } = toRefs(props)
-        console.log(x)
+        const handleAttack = (e) => {
+            if (e.code === 'Space') {
+                emit('attack', {
+                    x: x.value + 100,
+                    y: y.value
+                })
+            }
+        }
+        onMounted(() => {
+            window.addEventListener('keydown', handleAttack)
+        })
+
+        onUnmounted(() => {
+            window.removeEventListener('keydown', handleAttack)
+        })
+
         return {
             x,
             y

@@ -8,13 +8,14 @@ import { hitTestObject } from '../utils/index'
 
 export default defineComponent({
     setup(props, ctx) {
-        const bullets = reactive([{ x: 0, y: 0 }])
-        const fireBullet = (planeInfo) => {
-            bullets.push({ x: planeInfo.x, y: planeInfo.y })
-        }
-        const { planeInfo } = usePlaneInfo(fireBullet)
-        const { enemyPlanes } = useEnemyPlanes()
+        const { bullets } = useCreateBullets()
 
+        const { planeInfo } = usePlaneInfo()
+        const { enemyPlanes, addBullet } = useEnemyPlanes()
+
+        const onAttack = (info) => {
+            addBullet(info)
+        }
 
         const handleTicker = () => {
             // 敌方飞机
@@ -27,8 +28,17 @@ export default defineComponent({
                 }
             })
 
-            bullets.forEach((bulleInfo) => {
-                bulleInfo.y--
+            bullets.forEach((bulletInfo) => {
+                bulletInfo.y--
+            })
+
+            bullets.forEach((bulletInfo, bulletIndex) => {
+                enemyPlanes.forEach((enemyInfo, enemyIndex) => {
+                    if (hitTestObject(bulleInfo, enemyInfo)) {
+                        bullets.splice(bulletIndex, 1)
+                        enemyPlanes.splice(enemyIndex, 1)
+                    }
+                })
             })
         }
 
@@ -41,7 +51,8 @@ export default defineComponent({
         return {
             planeInfo,
             enemyPlanes,
-            bullets
+            bullets,
+            onAttack
         }
     },
     render(ctx) {
@@ -57,7 +68,7 @@ export default defineComponent({
         }
         return h("Container", [
             h(Map),
-            h(Plane, { x: ctx.planeInfo.x, y: ctx.planeInfo.y }),
+            h(Plane, { x: ctx.planeInfo.x, y: ctx.planeInfo.y, onAttack: ctx.onAttack }),
             ...createEnemyPlanes(),
             ...createBullets()
         ])
@@ -65,6 +76,19 @@ export default defineComponent({
 })
 
 
+
+function useCreateBullets() {
+    const bullets = reactive([])
+
+    const addBullet = (info) => {
+        bullets.push(info)
+    }
+
+    return {
+        bullets,
+        addBullet
+    }
+}
 
 function useEnemyPlanes() {
     const enemyPlanes = reactive([
@@ -83,7 +107,7 @@ function useEnemyPlanes() {
     return { enemyPlanes }
 }
 
-function usePlaneInfo(handleFire) {
+function usePlaneInfo() {
     const planeInfo = reactive({ x: 120, y: 550, width: 258, height: 364 })
     const speed = 15
 
@@ -102,8 +126,6 @@ function usePlaneInfo(handleFire) {
             case "ArrowRight":
                 planeInfo.x += speed
                 break
-            case "Space":
-                handleFire(planeInfo)
         }
     })
     return { planeInfo }
