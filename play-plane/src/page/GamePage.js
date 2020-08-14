@@ -8,10 +8,10 @@ import { hitTestObject } from '../utils/index'
 
 export default defineComponent({
     setup(props, ctx) {
-        const { bullets } = useCreateBullets()
+        const { bullets, addBullet } = useCreateBullets()
 
-        const { planeInfo } = usePlaneInfo()
-        const { enemyPlanes, addBullet } = useEnemyPlanes()
+        const { planeInfo, } = usePlaneInfo()
+        const { enemyPlanes } = useEnemyPlanes()
 
         const onAttack = (info) => {
             addBullet(info)
@@ -34,7 +34,7 @@ export default defineComponent({
 
             bullets.forEach((bulletInfo, bulletIndex) => {
                 enemyPlanes.forEach((enemyInfo, enemyIndex) => {
-                    if (hitTestObject(bulleInfo, enemyInfo)) {
+                    if (hitTestObject(bulletInfo, enemyInfo)) {
                         bullets.splice(bulletIndex, 1)
                         enemyPlanes.splice(enemyIndex, 1)
                     }
